@@ -2,15 +2,58 @@
   "config": {
     "flow_title": "Heated vest {name}",
     "step": {
-      "user": {"title": "Heated vest", "description": "Bluetooth address of the vest (advertises as \"ves\").", "data": {"address": "MAC address"}},
-      "confirm": {"description": "Add heated vest {address}?"}
+      "user": {
+        "title": "Heated vest",
+        "description": "Bluetooth address of the vest (advertises as \"ves\"). ESPHome action: the one of your transmitter ESP32 (leave empty to use the local Bluetooth adapter, experimental).",
+        "data": {
+          "address": "MAC address",
+          "esphome_action": "ESPHome transmit action"
+        }
+      },
+      "confirm": {
+        "description": "Add heated vest {address}?\n\nESPHome action: the one of your transmitter ESP32 (leave empty to use the local Bluetooth adapter, experimental).",
+        "data": {
+          "esphome_action": "ESPHome transmit action"
+        }
+      }
     },
-    "abort": {"already_configured": "This vest is already configured."}
+    "abort": {
+      "already_configured": "This vest is already configured."
+    }
   },
   "entity": {
-    "switch": {"power": {"name": "Heating"}},
-    "select": {"level": {"name": "Level"}},
-    "number": {"timer": {"name": "Timer"}},
-    "sensor": {"setpoint": {"name": "Target temperature"}, "remaining": {"name": "Time remaining"}}
+    "switch": {
+      "power": {
+        "name": "Heating"
+      }
+    },
+    "select": {
+      "level": {
+        "name": "Level"
+      }
+    },
+    "number": {
+      "timer": {
+        "name": "Timer"
+      }
+    },
+    "sensor": {
+      "setpoint": {
+        "name": "Target temperature"
+      },
+      "remaining": {
+        "name": "Time remaining"
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "description": "ESPHome action used to send commands (empty = local Bluetooth adapter, experimental).",
+        "data": {
+          "esphome_action": "ESPHome transmit action"
+        }
+      }
+    }
   }
 }

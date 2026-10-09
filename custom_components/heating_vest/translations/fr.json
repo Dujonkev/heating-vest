@@ -2,15 +2,58 @@
   "config": {
     "flow_title": "Gilet chauffant {name}",
     "step": {
-      "user": {"title": "Gilet chauffant", "description": "Adresse Bluetooth du gilet (annonce « ves »).", "data": {"address": "Adresse MAC"}},
-      "confirm": {"description": "Ajouter le gilet chauffant {address} ?"}
+      "user": {
+        "title": "Gilet chauffant",
+        "description": "Adresse Bluetooth du gilet (annonce « ves »). Action ESPHome : celle de votre ESP32 émetteur (laisser vide pour utiliser l'adaptateur Bluetooth local, expérimental).",
+        "data": {
+          "address": "Adresse MAC",
+          "esphome_action": "Action ESPHome d'émission"
+        }
+      },
+      "confirm": {
+        "description": "Ajouter le gilet chauffant {address} ?\n\nAction ESPHome : celle de votre ESP32 émetteur (laisser vide pour utiliser l'adaptateur Bluetooth local, expérimental).",
+        "data": {
+          "esphome_action": "Action ESPHome d'émission"
+        }
+      }
     },
-    "abort": {"already_configured": "Ce gilet est déjà configuré."}
+    "abort": {
+      "already_configured": "Ce gilet est déjà configuré."
+    }
   },
   "entity": {
-    "switch": {"power": {"name": "Chauffage"}},
-    "select": {"level": {"name": "Niveau"}},
-    "number": {"timer": {"name": "Minuterie"}},
-    "sensor": {"setpoint": {"name": "Température de consigne"}, "remaining": {"name": "Temps restant"}}
+    "switch": {
+      "power": {
+        "name": "Chauffage"
+      }
+    },
+    "select": {
+      "level": {
+        "name": "Niveau"
+      }
+    },
+    "number": {
+      "timer": {
+        "name": "Minuterie"
+      }
+    },
+    "sensor": {
+      "setpoint": {
+        "name": "Température de consigne"
+      },
+      "remaining": {
+        "name": "Temps restant"
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "description": "Action ESPHome utilisée pour envoyer les commandes (vide = adaptateur Bluetooth local, expérimental).",
+        "data": {
+          "esphome_action": "Action ESPHome d'émission"
+        }
+      }
+    }
   }
 }
