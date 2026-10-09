@@ -14,3 +14,8 @@ POWER_OFF = 0x99
 
 STATUS_PREFIX = bytes.fromhex("eebc35000a")
 UNAVAILABLE_AFTER = 90  # secondes sans annonce
+
+# Émission des commandes : action ESPHome (recommandé) ou BlueZ local si vide
+CONF_SERVICE = "esphome_action"
+DEFAULT_SERVICE = "esphome.gilet_chauffant_ble_send_adv"
+ADV_DURATION_MS = 1500

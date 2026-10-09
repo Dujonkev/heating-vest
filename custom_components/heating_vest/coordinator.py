@@ -12,7 +12,7 @@ import uuid
 from homeassistant.components import bluetooth
 from homeassistant.core import CALLBACK_TYPE, HomeAssistant, callback
 
-from .advertiser import VestAdvertiser, build_uuid
+from .transport import BluezTransport, EsphomeTransport, build_payload
 from .const import (
     CMD_POWER,
     CMD_TEMP,
@@ -74,13 +74,14 @@ def parse_status(service_info: bluetooth.BluetoothServiceInfoBleak) -> bytes | N
 class VestCoordinator:
     """Écoute les annonces du gilet et lui envoie des commandes."""
 
-    def __init__(self, hass: HomeAssistant, address: str) -> None:
+    def __init__(self, hass: HomeAssistant, address: str, action: str | None) -> None:
         self.hass = hass
         self.address = address.upper()
         self.state = VestState()
         self.last_seen: float = 0
+        self._was_available = False
         self._seq = random.randint(0x100, 0x7FFF)
-        self._advertiser = VestAdvertiser()
+        self._transport = EsphomeTransport(hass, action) if action else BluezTransport()
         self._listeners: list[Callable[[], None]] = []
         self._unsub: CALLBACK_TYPE | None = None
 
@@ -94,7 +95,7 @@ class VestCoordinator:
             self.hass,
             self._async_on_advertisement,
             bluetooth.BluetoothCallbackMatcher(address=self.address, connectable=False),
-            bluetooth.BluetoothScanningMode.ACTIVE,
+            bluetooth.BluetoothScanningMode.PASSIVE,
         )
         last = bluetooth.async_last_service_info(self.hass, self.address, connectable=False)
         if last is not None:
@@ -105,7 +106,7 @@ class VestCoordinator:
         if self._unsub:
             self._unsub()
             self._unsub = None
-        self._advertiser.close()
+        self._transport.close()
 
     @callback
     def async_add_listener(self, update: Callable[[], None]) -> Callable[[], None]:
@@ -131,22 +132,27 @@ class VestCoordinator:
         if status is None:
             return
         self.last_seen = time.monotonic()
-        self.state = VestState(
+        new_state = VestState(
             power=status[11] == 1,
             level=status[13],
             temperature=status[14],
             timer_active=status[10] == 1,
             timer_remaining=int.from_bytes(status[8:10], "little") if status[10] == 1 else 0,
         )
+        # N'écrit l'état dans HA que s'il a changé (le gilet annonce plusieurs fois par seconde)
+        if new_state == self.state and self._was_available:
+            return
+        self.state = new_state
+        self._was_available = True
         self._notify()
 
     async def _send(self, value: int, cmd: int, done: Callable[[VestState], bool]) -> None:
         """Diffuse la commande et la répète tant que le gilet ne l'a pas appliquée."""
         for attempt in range(1, 4):
             self._seq = (self._seq + 1) & 0xFFFF or 1
-            service_uuid = build_uuid(self.address, value, cmd, self._seq)
-            _LOGGER.debug("Commande gilet %s (essai %s) : %s", self.address, attempt, service_uuid)
-            await self._advertiser.send(service_uuid)
+            payload = build_payload(self.address, value, cmd, self._seq)
+            _LOGGER.debug("Commande gilet %s (essai %s) : %s", self.address, attempt, payload.hex())
+            await self._transport.send(payload)
             for _ in range(6):
                 if done(self.state):
                     return

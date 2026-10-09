@@ -5,8 +5,6 @@ contenant [MAC du gilet][valeur][commande][séquence][01 00][ef bc].
 """
 import asyncio
 import logging
-import struct
-import uuid
 
 from dbus_fast import BusType, Message, MessageType, Variant
 from dbus_fast.aio import MessageBus
@@ -45,13 +43,6 @@ class _Advertisement(ServiceInterface):
     @dbus_property(access=PropertyAccess.READ)
     def MaxInterval(self) -> "u":  # noqa: N802,F821
         return 60
-
-
-def build_uuid(address: str, value: int, cmd: int, seq: int) -> str:
-    """Construit l'UUID de commande (octets little-endian inversés)."""
-    mac_le = bytes.fromhex(address.replace(":", ""))[::-1]
-    payload = mac_le + struct.pack("<HHHH", value & 0xFFFF, cmd, seq & 0xFFFF, 1) + b"\xef\xbc"
-    return str(uuid.UUID(bytes=payload[::-1]))
 
 
 class VestAdvertiser:
