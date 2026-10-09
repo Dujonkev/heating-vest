@@ -1,0 +1,16 @@
+{
+  "config": {
+    "flow_title": "Gilet chauffant {name}",
+    "step": {
+      "user": {"title": "Gilet chauffant", "description": "Adresse Bluetooth du gilet (annonce « ves »).", "data": {"address": "Adresse MAC"}},
+      "confirm": {"description": "Ajouter le gilet chauffant {address} ?"}
+    },
+    "abort": {"already_configured": "Ce gilet est déjà configuré."}
+  },
+  "entity": {
+    "switch": {"power": {"name": "Chauffage"}},
+    "select": {"level": {"name": "Niveau"}},
+    "number": {"timer": {"name": "Minuterie"}},
+    "sensor": {"setpoint": {"name": "Température de consigne"}, "remaining": {"name": "Temps restant"}}
+  }
+}

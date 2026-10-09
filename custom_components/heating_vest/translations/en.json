@@ -1,0 +1,16 @@
+{
+  "config": {
+    "flow_title": "Heated vest {name}",
+    "step": {
+      "user": {"title": "Heated vest", "description": "Bluetooth address of the vest (advertises as \"ves\").", "data": {"address": "MAC address"}},
+      "confirm": {"description": "Add heated vest {address}?"}
+    },
+    "abort": {"already_configured": "This vest is already configured."}
+  },
+  "entity": {
+    "switch": {"power": {"name": "Heating"}},
+    "select": {"level": {"name": "Level"}},
+    "number": {"timer": {"name": "Timer"}},
+    "sensor": {"setpoint": {"name": "Target temperature"}, "remaining": {"name": "Time remaining"}}
+  }
+}
