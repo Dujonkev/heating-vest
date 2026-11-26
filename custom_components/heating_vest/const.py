@@ -14,6 +14,13 @@ POWER_OFF = 0x99
 
 STATUS_PREFIX = bytes.fromhex("eebc35000a")
 UNAVAILABLE_AFTER = 90  # secondes sans annonce
+# Vérification de la disponibilité et rafraîchissement des capteurs de diagnostic
+DIAGNOSTIC_INTERVAL = 30  # secondes
+
+# Envoi d'une commande : nombre d'émissions, puis attente de la confirmation
+COMMAND_ATTEMPTS = 3
+CONFIRM_CHECKS = 6
+CONFIRM_INTERVAL = 0.5  # secondes
 
 # Émission des commandes : action ESPHome (recommandé) ou BlueZ local si vide
 CONF_SERVICE = "esphome_action"

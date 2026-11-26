@@ -43,6 +43,12 @@
       },
       "remaining": {
         "name": "Temps restant"
+      },
+      "rssi": {
+        "name": "Force du signal"
+      },
+      "last_seen": {
+        "name": "Dernière annonce"
       }
     }
   },
@@ -54,6 +60,14 @@
           "esphome_action": "Action ESPHome d'émission"
         }
       }
+    }
+  },
+  "exceptions": {
+    "out_of_range": {
+      "message": "Le gilet chauffant est hors de portée : aucune annonce reçue récemment. Allumez-le ou rapprochez-le d'un proxy Bluetooth."
+    },
+    "not_confirmed": {
+      "message": "Le gilet chauffant n'a pas confirmé la commande. Vérifiez que l'émetteur ESPHome est en ligne et proche du gilet."
     }
   }
 }

@@ -17,6 +17,12 @@ et **écoute les annonces** du téléphone. L'intégration fait exactement parei
   (firmware fourni dans [`esphome/gilet-chauffant-ble.yaml`](esphome/gilet-chauffant-ble.yaml)).
 
 Chaque commande est répétée (jusqu'à 3 fois) tant que le gilet ne confirme pas le changement.
+Si le gilet ne confirme toujours pas, ou s'il est hors de portée, Home Assistant affiche une **erreur
+explicite** dans l'interface (au lieu d'échouer en silence). Les commandes rapprochées
+(ex. « allumer » puis « niveau 3 ») sont envoyées **l'une après l'autre**.
+
+Sans annonce du gilet pendant 90 s (gilet éteint ou trop loin), les entités passent
+**indisponibles** ; elles reviennent dès la prochaine annonce.
 
 > ℹ️ Un repli « adaptateur Bluetooth local » (BlueZ) existe si le champ *Action ESPHome* est laissé vide,
 > mais il est **déconseillé** : sur certains serveurs il a déstabilisé la pile Bluetooth de Home Assistant.
@@ -30,6 +36,8 @@ Chaque commande est répétée (jusqu'à 3 fois) tant que le gilet ne confirme p
 | `number` Minuterie | Arrêt automatique (0–120 min) |
 | `sensor` Température de consigne | Consigne actuelle |
 | `sensor` Temps restant | Temps restant de la minuterie |
+| `sensor` Force du signal *(diagnostic)* | RSSI de la dernière annonce reçue (dBm), rafraîchi toutes les 30 s |
+| `sensor` Dernière annonce *(diagnostic)* | Heure de la dernière annonce reçue (reste visible hors de portée) |
 
 ## Installation
 
@@ -72,6 +80,25 @@ Commande diffusée par le téléphone (annonce brute `04 09 'TSE' 11 07` + 16 oc
 ```
 EE BC 35 00 0A .. .. .. [restant u16 s][minuterie active][marche][..][niveau][température][..]
 ```
+
+## Développement
+
+```bash
+pip install -r requirements_test.txt
+pytest
+```
+
+Les tests simulent les annonces du gilet et l'émetteur ESPHome ; ils sont lancés par GitHub Actions
+avec hassfest et la validation HACS.
+
+## Nouveautés
+
+### 0.3.0
+- Les entités passent indisponibles quand le gilet n'émet plus (auparavant l'état restait figé).
+- Erreur affichée dans Home Assistant si le gilet est hors de portée ou ne confirme pas une commande.
+- Commandes envoyées une par une (plus de mélange entre deux commandes rapprochées).
+- Nouveaux capteurs de diagnostic : force du signal et dernière annonce.
+- `integration_type: device`, `strings.json`, CI (hassfest, HACS, tests).
 
 ## Licence
 
