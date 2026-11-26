@@ -24,9 +24,16 @@ class VestEntity(Entity):
             model="HEATING VEST",
         )
 
+    # Entités de diagnostic : rafraîchies périodiquement plutôt qu'à chaque annonce
+    _diagnostic_listener = False
+
     @property
     def available(self) -> bool:
         return self.coordinator.available
 
     async def async_added_to_hass(self) -> None:
-        self.async_on_remove(self.coordinator.async_add_listener(self.async_write_ha_state))
+        self.async_on_remove(
+            self.coordinator.async_add_listener(
+                self.async_write_ha_state, diagnostic=self._diagnostic_listener
+            )
+        )

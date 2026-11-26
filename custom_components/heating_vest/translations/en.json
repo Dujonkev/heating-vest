@@ -43,6 +43,12 @@
       },
       "remaining": {
         "name": "Time remaining"
+      },
+      "rssi": {
+        "name": "Signal strength"
+      },
+      "last_seen": {
+        "name": "Last advertisement"
       }
     }
   },
@@ -54,6 +60,14 @@
           "esphome_action": "ESPHome transmit action"
         }
       }
+    }
+  },
+  "exceptions": {
+    "out_of_range": {
+      "message": "The heated vest is out of range: no advertisement received recently. Switch it on or move closer to a Bluetooth proxy."
+    },
+    "not_confirmed": {
+      "message": "The heated vest did not confirm the command. Check that the ESPHome transmitter is online and close to the vest."
     }
   }
 }

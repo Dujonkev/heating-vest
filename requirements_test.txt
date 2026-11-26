@@ -1,0 +1,11 @@
+pytest-homeassistant-custom-component
+# Dépendances du composant bluetooth de Home Assistant (non installées d'office)
+aiousbwatcher
+bleak
+bleak-retry-connector
+bluetooth-adapters
+bluetooth-auto-recovery
+bluetooth-data-tools
+dbus-fast
+habluetooth
+pyserial
